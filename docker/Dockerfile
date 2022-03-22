@@ -8,11 +8,8 @@ RUN ln -fs /usr/share/zoneinfo/Europe/Amsterdam /etc/localtime
 # - https://github.com/zju3dv/pvnet/blob/master/docker/Dockerfile
 # - https://github.com/zju3dv/clean-pvnet
 RUN apt-get update && \
-    apt install -yq software-properties-common && \
-    add-apt-repository ppa:deadsnakes/ppa && \
-    apt update && \
     apt install -yq \
-        nano \
+        vim \
         sudo \
         wget \
         curl \
@@ -20,9 +17,6 @@ RUN apt-get update && \
         cmake \
         git \
         ca-certificates \
-        python3.7 \
-        python3-pip \
-        python-qt4 \
         libjpeg-dev \
         zip \
         unzip \
