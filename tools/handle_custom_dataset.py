@@ -64,6 +64,9 @@ def record_ann(model_meta, img_id, ann_id, images, annotations):
 
         pose_path = os.path.join(pose_dir, 'pose{}.npy'.format(ind))
         pose = np.load(pose_path)
+        if pose.shape[0] == 4:
+            assert np.all(pose[3, :] == [0, 0, 0, 1])
+            pose = pose[:3, :]
         corner_2d = base_utils.project(corner_3d, K, pose)
         center_2d = base_utils.project(center_3d[None], K, pose)[0]
         fps_2d = base_utils.project(fps_3d, K, pose)
