@@ -60,7 +60,9 @@ RUN cd /opt && \
     pip install -r requirements.txt && \
     pip install --user transforms3d
 
-RUN cd /opt/pvnet/lib/csrc && \
+RUN . /opt/conda/etc/profile.d/conda.sh && \
+    conda activate pvnet && \
+    cd /opt/pvnet/lib/csrc && \
     cd ransac_voting; python setup.py build_ext --inplace; cd .. && \
     cd nn; python setup.py build_ext --inplace; cd .. && \
     cd fps; python setup.py build_ext --inplace; cd .. && \
