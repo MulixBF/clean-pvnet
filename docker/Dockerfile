@@ -1,7 +1,7 @@
 FROM nvidia/cuda:9.0-devel-ubuntu16.04
 
 # Hack to not have tzdata cmdline config during build
-RUN ln -fs /usr/share/zoneinfo/Europe/Amsterdam /etc/localtime
+RUN ln -fs /usr/share/zoneinfo/Europe/Moscow /etc/localtime
 
 # Install python3.7 and dependencies, taken from:
 # - hhttps://websiteforstudents.com/installing-the-latest-python-3-7-on-ubuntu-16-04-18-04/
@@ -24,6 +24,12 @@ RUN apt-get update && \
         libeigen3-dev \
         libglfw3-dev \
         libglfw3 \
+        libgoogle-glog-dev \
+        libsuitesparse-dev \
+        libatlas-base-dev \
+        libsm6 \
+        libxrender1 \
+        libfontconfig1 \
         libgoogle-glog-dev \
         libsuitesparse-dev \
         libatlas-base-dev \
@@ -52,8 +58,11 @@ RUN cd /opt && \
     pip install --user torch==1.1.0 -f https://download.pytorch.org/whl/cu90/stable && \
     pip install --user Cython==0.28.2 && \
     pip install -r requirements.txt && \
-    pip install --user transforms3d && \
-    cd .. && \
-    rm -rf pvnet
+    pip install --user transforms3d
 
-CMD ["/bin/bash"]
+RUN cd /opt/pvnet/lib/csrc && \
+    cd ransac_voting; python setup.py build_ext --inplace; cd .. && \
+    cd nn; python setup.py build_ext --inplace; cd .. && \
+    cd fps; python setup.py build_ext --inplace; cd .. && \
+    cd dcn_v2; python setup.py build_ext --inplace; cd .. && \
+    cd uncertainty_pnp; python setup.py build_ext --inplace
