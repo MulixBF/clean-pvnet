@@ -68,3 +68,13 @@ RUN . /opt/conda/etc/profile.d/conda.sh && \
     cd fps; python setup.py build_ext --inplace; cd .. && \
     cd dcn_v2; python setup.py build_ext --inplace; cd .. && \
     cd uncertainty_pnp; python setup.py build_ext --inplace
+
+RUN . /opt/conda/etc/profile.d/conda.sh && \
+    conda activate pvnet && \
+    pip install jupyter ipykernel && \
+    python -m ipykernel install --name pvnet
+
+CMD . /opt/conda/etc/profile.d/conda.sh && \
+    conda activate pvnet && \
+		jupyter notebook --allow-root --ip 0.0.0.0
+
