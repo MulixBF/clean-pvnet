@@ -1,6 +1,6 @@
 # README
 
-## Build 
+## Build
 
 ```bash
 docker build -t pvnet_clean:latest .

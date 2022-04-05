@@ -1,12 +1,6 @@
-FROM nvidia/cuda:9.0-devel-ubuntu16.04
+FROM nvidia/cuda:9.0-devel
 
-# Hack to not have tzdata cmdline config during build
 RUN ln -fs /usr/share/zoneinfo/Europe/Moscow /etc/localtime
-
-# Install python3.7 and dependencies, taken from:
-# - hhttps://websiteforstudents.com/installing-the-latest-python-3-7-on-ubuntu-16-04-18-04/
-# - https://github.com/zju3dv/pvnet/blob/master/docker/Dockerfile
-# - https://github.com/zju3dv/clean-pvnet
 RUN apt-get update && \
     apt install -yq \
         vim \
@@ -46,28 +40,14 @@ RUN wget -q https://repo.anaconda.com/miniconda/Miniconda3-py37_4.8.3-Linux-x86_
     conda install conda-build
 
 ENV PATH $PATH:/opt/conda/envs/env/bin:/opt/conda/bin
+ENV CUDA_HOME /usr/local/cuda
 
-# installing PVnet dependencies (and removing pvnet again)
-RUN cd /opt && \
-    git clone https://github.com/MulixBF/clean-pvnet.git pvnet && \
-    cd pvnet && \
-    conda init bash && \
+RUN conda init bash && \
     conda create -n pvnet python=3.7 && \
     . /opt/conda/etc/profile.d/conda.sh && \
     conda activate pvnet && \
-    pip install --user torch==1.1.0 -f https://download.pytorch.org/whl/cu90/stable && \
-    pip install --user Cython==0.28.2 && \
-    pip install -r requirements.txt && \
-    pip install --user transforms3d
-
-RUN . /opt/conda/etc/profile.d/conda.sh && \
-    conda activate pvnet && \
-    cd /opt/pvnet/lib/csrc && \
-    cd ransac_voting; python setup.py build_ext --inplace; cd .. && \
-    cd nn; python setup.py build_ext --inplace; cd .. && \
-    cd fps; python setup.py build_ext --inplace; cd .. && \
-    cd dcn_v2; python setup.py build_ext --inplace; cd .. && \
-    cd uncertainty_pnp; python setup.py build_ext --inplace
+    pip install torch==1.1.0 -f https://download.pytorch.org/whl/cu90/stable && \
+    pip install Cython==0.28.2
 
 RUN . /opt/conda/etc/profile.d/conda.sh && \
     conda activate pvnet && \
